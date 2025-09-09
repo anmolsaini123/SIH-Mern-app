@@ -2,9 +2,15 @@ import mongoose from "mongoose";
 
 const userschema = mongoose.Schema(
   {
-    name: String,
+    fullName : String,
     password: String,
     email: String,
+    username:{
+      type:String, 
+      required:true,
+      unique: true
+
+    },
     role: {
       type: String,
       enum: ["user", "admin "],
@@ -15,13 +21,13 @@ const userschema = mongoose.Schema(
       default: false,
     },
     verificationToken: {
-      type: sting,
+      type: String,
     },
     resetPasswordToken: {
-      type: sting,
+      type: String,
     },
     resetPasswordExpire: {
-      type: date,
+      type: Date,
     },
   },
   {
