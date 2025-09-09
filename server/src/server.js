@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import cors from "cors";
 import userroutes from "./routes/user.routes.js";
 import { connectdb } from "./db/db.js";
+import complaintroutes
+ from "./routes/complaint.routes.js";
 dotenv.config({
   path: './.env' 
 });
@@ -14,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 connectdb();
 app.use("/api/data", userroutes);
+app.use("/api/cases", complaintroutes);
+
 app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);
 });
