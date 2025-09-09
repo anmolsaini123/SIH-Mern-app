@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 
 const verificationSchema = mongoose.Schema(
   {
-    addharCard: {
-      type: String,
+ 
+    phoneNo: {
+      type: Number,
       unique: true,
       required: true,
     },
