@@ -2,10 +2,10 @@
 import express from "express";
 import dotenv from 'dotenv'; 
 import cors from "cors";
-import userroutes from "./routes/user.routes.js";
+import router from "./routes/user.routes.js";
 import { connectdb } from "./db/db.js";
-import complaintroutes
- from "./routes/complaint.routes.js";
+import sos from "./routes/sos.routes.js"
+import complaintroutes from "./routes/complaint.routes.js";
 dotenv.config({
   path: './.env' 
 });
@@ -14,9 +14,12 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
 connectdb();
-app.use("/api/data", userroutes);
-app.use("/api/cases", complaintroutes);
+app.use("/api/v1/users", router);
+app.use("/api/v1/cases", complaintroutes);
+app.use("/api/v1/sos", sos);
+
 
 app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);
