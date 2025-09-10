@@ -50,7 +50,7 @@ const registerUser = AsyncHanddler(async (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure:true,
+    secure: true,
     sameSite: "strict",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
@@ -95,11 +95,11 @@ const loginUser = AsyncHanddler(async (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure:false,
+    secure: false,
     sameSite: "none",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
-  console.log(token)
+  console.log(token);
   const loggedInUser = await User.findById(user._id).select("-password");
   console.log(loggedInUser);
 
@@ -114,5 +114,69 @@ const loginUser = AsyncHanddler(async (req, res) => {
     )
   );
 });
+const logoutUser = AsyncHanddler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        token: undefined,
+      },
+    },
+    {
+      new: true,
+    }
+  );
 
-export { registerUser, loginUser };
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .clearCookie("token", options)
+    .json(new APIresp(200, {}, "User logged out successfully"));
+});
+const changecurrentpassword = AsyncHanddler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || !newPassword) {
+    throw new Apierror(400, "Old password and new password are required");
+  }
+  const user = await User.findById(req.user._id).select("+password");
+  if (!user) {
+    throw new Apierror(404, "User not found");
+  }
+  const ok = await bcrypt.compare(oldPassword, user.password);
+
+  if (!ok) throw new Apierror(400, "Invalid old password");
+
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(newPassword, salt);
+  await user.save();
+  
+  return res
+    .status(200)
+    .json(new APIresp(200, {}, "Password changed successfully"));
+});
+const getCureentUser = AsyncHanddler(async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: "Unauthorized: User not authenticated",
+      data: null,
+    });
+  }
+
+  return res.status(200).json({
+    statusCode: 200,
+    message: "Current user fetch",
+    data: req.user,
+  });
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  changecurrentpassword,
+  getCureentUser,
+};
