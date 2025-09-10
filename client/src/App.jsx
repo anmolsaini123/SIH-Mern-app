@@ -1,12 +1,25 @@
-import LoginPage from "./Pages/Login"
-import ComplaintPage from "./Pages/Complaint"
-function App() {
-  
-  return (
-    <>
-     <LoginPage/>
-    </>
-  )
-}
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import LoginPage from "./Pages/Login";
+import RegisterPage from "./Pages/Regester";
+import HomePage from "./Pages/Homepage";
+import ProtectedRoute from "./context/ProtectedRoute";
 
-export default App
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<RegisterPage />} />
+      <Route path="/" element={<Navigate to="/HomePage" replace />} />
+      <Route
+        path="/HomePage"
+        element={
+          <ProtectedRoute>
+            <HomePage />
+            
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  );
+}

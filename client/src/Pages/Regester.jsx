@@ -2,15 +2,20 @@ import React, { useState, useEffect } from "react";
 import { Meteors } from "@/components/magicui/meteors";
 import { Sun, Moon } from "lucide-react";
 import { FaGithub, FaMicrosoft, FaGoogle } from "react-icons/fa";
-import { useAuth } from "../context/AuthContext"; 
-import { useNavigate } from "react-router-dom";
-export default function LoginPage() {
+import { useAuth } from "../context/AuthContext"; // 👈 auth context import
+
+export default function RegisterPage() {
   const [darkMode, setDarkMode] = useState(true);
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    fullName: "",
+    password: "",
+    role: "user",
+  });
   const [error, setError] = useState(null);
 
-  const { login } = useAuth(); 
-  const navigate = useNavigate(); 
+  const { register } = useAuth(); // 👈 assuming you added register in AuthContext
 
   useEffect(() => {
     if (darkMode) {
@@ -24,10 +29,9 @@ export default function LoginPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSignIn = async () => {
+  const handleRegister = async () => {
     try {
-      await login({ username: form.email, password: form.password }); 
-      // 👆 backend may accept username/email, adjust accordingly
+      await register(form); // 👈 send full form
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     }
@@ -47,10 +51,37 @@ export default function LoginPage() {
       {/* Left Side (Form) */}
       <div className="w-1/2 flex flex-col justify-center px-12">
         <h1 className="text-2xl font-semibold mb-8">
-          Welcome back to <br />
-          <span className="italic font-medium">the travel safe</span>
+          Create your account <br />
+          <span className="italic font-medium">on travel safe</span>
         </h1>
 
+        {/* Username */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Username</label>
+          <input
+            type="text"
+            name="username"
+            value={form.username}
+            onChange={handleChange}
+            placeholder="Enter your username"
+            className="w-full border-b border-gray-400 dark:border-gray-600 bg-transparent focus:outline-none py-1"
+          />
+        </div>
+
+        {/* Full Name */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Full Name</label>
+          <input
+            type="text"
+            name="fullName"
+            value={form.fullName}
+            onChange={handleChange}
+            placeholder="Enter your full name"
+            className="w-full border-b border-gray-400 dark:border-gray-600 bg-transparent focus:outline-none py-1"
+          />
+        </div>
+
+        {/* Email */}
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">Email</label>
           <input
@@ -63,6 +94,7 @@ export default function LoginPage() {
           />
         </div>
 
+        {/* Password */}
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">Password</label>
           <input
@@ -75,11 +107,25 @@ export default function LoginPage() {
           />
         </div>
 
+        {/* Role */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-1">Role</label>
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+            className="w-full border-b border-gray-400 dark:border-gray-600 bg-transparent focus:outline-none py-1"
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
         <button
-          onClick={handleSignIn}
-          className="w-full bg-red-600 text-white py-2 rounded mt-2 hover:bg-red-700 transition"
+          onClick={handleRegister}
+          className="w-full bg-green-600 text-white py-2 rounded mt-2 hover:bg-green-700 transition"
         >
-          Sign in
+          Register
         </button>
 
         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
@@ -92,11 +138,8 @@ export default function LoginPage() {
           <div className="flex-grow h-px bg-gray-300 dark:bg-gray-600"></div>
         </div>
 
-       <button
-          onClick={() => navigate("/signup")}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
-          Sign up
+        <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+          Already have an account? Sign in
         </button>
 
         <div className="flex justify-center items-center space-x-6 mt-8">
