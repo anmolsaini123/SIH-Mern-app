@@ -5,15 +5,18 @@ import cors from "cors";
 import router from "./routes/user.routes.js";
 import { connectdb } from "./db/db.js";
 import sos from "./routes/sos.routes.js"
+import cookieParser from "cookie-parser";
 import newsRoutes from "./routes/news.routes.js"
 import complaintroutes from "./routes/complaint.routes.js";
 dotenv.config({
   path: './.env' 
 });
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+app.use(cookieParser());
 
-app.use(cors());
+app.use(cors({ credentials: true}));
 app.use(express.json());
 
 connectdb();

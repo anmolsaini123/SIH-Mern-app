@@ -3,7 +3,7 @@ import { Apierror } from "../utils/APIerror.js";
 import User from "../models/user.models.js";
 import { APIresp } from "../utils/APIresp.js";
 import bcrypt from "bcrypt";
-
+import { generateToken } from "../utils/generateToken.js";
 const registerUser = AsyncHanddler(async (req, res) => {
   // * get user details from frontend
   // * validations
@@ -32,7 +32,7 @@ const registerUser = AsyncHanddler(async (req, res) => {
   if (existingUser) {
     throw new Apierror(409, "User with same email or username already exists");
   }
-  const salt = await bcrypt.genSalt(15);
+  const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   const user = await User.create({
     fullName,
@@ -41,17 +41,29 @@ const registerUser = AsyncHanddler(async (req, res) => {
     username: username.toLowerCase(),
   });
 
-  const createdUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-  );
+  const createdUser = await User.findById(user._id).select("-password");
 
   if (!createdUser) {
     throw new Apierror(500, "Something went wrong while registering user");
   }
+  const token = generateToken(user._id);
 
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure:true,
+    sameSite: "strict",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+  console.log(token);
   return res
     .status(201)
-    .json(new APIresp(201, createdUser, "User registered successfully"));
+    .json(
+      new APIresp(
+        201,
+        { user: createdUser, token },
+        "User registered successfully"
+      )
+    );
 });
 
 const loginUser = AsyncHanddler(async (req, res) => {
@@ -79,19 +91,24 @@ const loginUser = AsyncHanddler(async (req, res) => {
   if (!ifpasswordcorrect) {
     throw new Apierror(401, "Invalid credentials");
   }
+  const token = generateToken(user._id);
 
-  const loggedInUser = await User.findById(user._id).select("-password ");
-  console.log(loggedInUser);
-  const options = {
+  res.cookie("token", token, {
     httpOnly: true,
-    secure: true,
-  };
+    secure:false,
+    sameSite: "none",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+  console.log(token)
+  const loggedInUser = await User.findById(user._id).select("-password");
+  console.log(loggedInUser);
 
   return res.status(200).json(
     new APIresp(
       200,
       {
         user: loggedInUser,
+        token,
       },
       "User logged in successfully"
     )
