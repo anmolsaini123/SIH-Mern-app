@@ -10,7 +10,7 @@ const api = axios.create({
 export const login = (data) => api.post("/v1/users/login", data);
 export const register = (data) => api.post("/v1/users/signup", data);
 export const logout = () => api.post("/v1/users/logout");
-export const postComplaint = (payload) => api.post('/complaint', payload)
-export const getComplaints = () => api.get('/allComplaints')
+export const postComplaint = (payload) => api.post('/v1/cases/complaint', payload)
+export const getComplaints = () => api.get('/v1/cases/allComplaints')
 
 export default api

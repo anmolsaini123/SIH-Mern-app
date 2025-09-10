@@ -4,7 +4,7 @@ import LoginPage from "./Pages/Login";
 import RegisterPage from "./Pages/Regester";
 import HomePage from "./Pages/Homepage";
 import ProtectedRoute from "./context/ProtectedRoute";
-
+import ComplaintPage from "./Pages/Complaint";
 export default function App() {
   return (
     <Routes>
@@ -16,7 +16,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <HomePage />
-            
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/complaint"
+        element={
+          <ProtectedRoute>
+            <ComplaintPage />
           </ProtectedRoute>
         }
       />
