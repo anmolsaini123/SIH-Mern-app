@@ -3,9 +3,12 @@ import { Meteors } from "@/components/magicui/meteors";
 import { Sun, Moon } from "lucide-react";
 import { FaGithub, FaMicrosoft, FaGoogle } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext"; // 👈 auth context import
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
   const [darkMode, setDarkMode] = useState(true);
+    const navigate = useNavigate(); 
+
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -138,7 +141,7 @@ export default function RegisterPage() {
           <div className="flex-grow h-px bg-gray-300 dark:bg-gray-600"></div>
         </div>
 
-        <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+        <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition" onClick={() => navigate("/login")}>
           Already have an account? Sign in
         </button>
 

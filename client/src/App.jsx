@@ -5,6 +5,7 @@ import RegisterPage from "./Pages/Regester";
 import HomePage from "./Pages/Homepage";
 import ProtectedRoute from "./context/ProtectedRoute";
 import ComplaintPage from "./Pages/Complaint";
+import FullMap from "./Pages/fullMap";
 export default function App() {
   return (
     <Routes>
@@ -27,6 +28,14 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+          path="/full-map"
+          element={
+            <ProtectedRoute>
+              <FullMap />
+            </ProtectedRoute>
+          }
+        />
     </Routes>
   );
 }
