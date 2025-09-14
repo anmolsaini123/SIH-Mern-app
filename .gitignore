@@ -1,7 +1,0 @@
-# Node
-node_modules/
-.env
-
-# React build
-client/build/
-server/node_modules/
